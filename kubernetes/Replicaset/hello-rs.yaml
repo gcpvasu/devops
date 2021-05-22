@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: httpd-rs
+  labels:
+    app:httpd
+spec: 
+  minReadySeconds: 5
+  replicas: 2
+  selector: 
+    matchlabels: 
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app:httpd
+    spec: 
+      containers
+        - name: httpd-containers
+          image: nginx
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            intialDelaySeconds: 1
+            periodSeconds: 5 
