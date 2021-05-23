@@ -1,12 +1,12 @@
 ---
 - name: Install Apache server and Packages
-  host: webserver
+  hosts: webserver
   become: yes
   tasks:
-    - name: Fail the execution when the distribution is not centos and ubuntu
+    - name: Fail the execution when the distribution is not RedHat and ubuntu
       fail:
-        msg: "This playbook will work only on ubuntu and centos intances, other os will be added soon"
-      when: ansible_facts['distribution'] != "Ubuntu" and ansible_facts['distribution'] != "CentOS"
+        msg: "This playbook will work only on ubuntu and RedHat intances, other os will be added soon"
+      when: ansible_facts['distribution'] != "Ubuntu" and ansible_facts['distribution'] != "RedHat"
     - name: Install Apache
       package:
         name: "{{ apache_package }}"
@@ -20,7 +20,7 @@
       loop: "{{ php_packages }}"
     - name: copy the php info page
       copy:
-        dest: "{{ info_page_php }}"
+        dest: "{{ info_page_path }}"
         src: "info.php"
       notify:
         - log info page is copied
@@ -40,4 +40,4 @@
     - name: Restart Apache
       service:
         name: "{{ apache_package }}"
-        state: restart 
+        state: restarted
