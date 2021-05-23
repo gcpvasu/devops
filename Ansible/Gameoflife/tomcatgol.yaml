@@ -1,0 +1,28 @@
+---
+- name: Tomcat8 based application game of life
+  hosts: all
+  become: yes
+  tasks:
+    - name: update ubuntupackages and install java
+      apt: 
+        name: "{{ packages }}"
+        update-cache: yes
+        state: present
+      vars:
+        packages:
+          - openjdk-8-jdk
+    - name: Install tomcat8
+      apt:
+        name: tomcat8
+        state: present
+    - name: Download Game of life 
+      get_url: 
+        url: https://referenceappkhaja.s3-us-west-2.amazonaws.com/gameoflife.war
+        dest: /var/lib/tomcat8/webapps/gameoflife.war
+    - name: Redirect port 8080 to 8081 with Rich Rule
+      ansible.posix.firewalld:
+        rich_rule: rule family=ipv4 forward-port port=8080 protocol=tcp to-port=8081
+        zone: public
+        permanent: yes
+        immediate: yes
+        state: enabled
