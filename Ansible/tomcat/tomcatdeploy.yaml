@@ -2,7 +2,7 @@
 - name: Installation of Tomcat9
   hosts: all
   become: yes
-  Tasks:
+  tasks:
     - name: Install Java Package
       apt:
         name: "{{ java_package }}"
@@ -21,12 +21,15 @@
         name: "{{ tomcat_username }}"
         group: "{{ tomcat_groupname }}"
         home: "{{ tomcat_home_dir }}"
-        shell: "{{ tomcat_Shell }}"
+        shell: "{{ tomcat_shell }}"
     - name: Download the tomcat
       get_url:
         url: "{{ tomcat_download_url }}"
         dest: "{{ tomcat_download_dest }}"
-    - name: Extract the tomcat
-      unarchive:
-        src: "{{ tomcat_download_dest }}"
-        dest: "{{ tomcat_home_dir }}"
+    - name: Check if the tomcat is extracted
+      stat:
+        path: "{{ tomcat_check_dir }}"
+      register: tomcat_conf
+    - name: untar the tomcat
+      command: "tar xzvf {{ tomcat_download_dest }} -C {{ tomcat_home_dir }} --strip-components=1"
+      when: not tomcat_conf.stat.exists
