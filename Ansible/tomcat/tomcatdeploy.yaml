@@ -32,4 +32,4 @@
       register: tomcat_conf
     - name: untar the tomcat
       command: "tar xzvf {{ tomcat_download_dest }} -C {{ tomcat_home_dir }} --strip-components=1"
-      when: not tomcat_conf.stat.exist
+      when: not tomcat_conf.stat.exists
