@@ -61,7 +61,7 @@
         - reload daemon
     - name: enable and start tomcat service
       service: 
-        name: tomcat.service
+        name: tomcat.service.j2
         enabled: yes
         state: started
   handlers:
