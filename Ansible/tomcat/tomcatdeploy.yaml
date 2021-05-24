@@ -55,25 +55,19 @@
       loop: "{{ tomcat_directories_for_group_permissions }}"
     - name: copy the tomcat service
       template:
-        src: tomcat.service
+        src: tomcat.service.j2
         dest: "{{ tomcat_service_file }}"
       notify:
         - reload daemon
     - name: enable and start tomcat service
       service: 
-        name: tomcat.service.j2
+        name: tomcat.service
         enabled: yes
         state: started
     - name: copy the tomcat users file
       template:
         src: tomcat-users.xml.j2
         dest: "{{ tomcat_users_xml }}"
-      notify:
-        - restart tomcat
-    - name: copy the context file
-      copy:
-        src: context.xml
-        dest: "{{ tomcat_manager_context }}"
       notify:
         - restart tomcat
   handlers:
