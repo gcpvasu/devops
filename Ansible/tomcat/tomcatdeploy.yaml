@@ -33,3 +33,40 @@
     - name: untar the tomcat
       command: "tar xzvf {{ tomcat_download_dest }} -C {{ tomcat_home_dir }} --strip-components=1"
       when: not tomcat_conf.stat.exists
+    - name: update group permissions for tomcat dir
+      file:
+        path: "{{ tomcat_home_dir }}"
+        group: "{{ tomcat_groupname }}"
+        owner: "{{ tomcat_groupname }}"
+        recurse: yes
+        state: directory
+    - name: update group permissions for tomcat conf directory
+      file:
+        path: "{{ tomcat_check_dir }}" 
+        mode: u=rwx,g=rx
+        state: directory
+    - name: update recursive ownership for tomcat
+      file:
+        path: "{{ item }}"
+        recurse: true
+        group: "{{ tomcat_groupname }}"
+        owner: "{{ tomcat_groupname }}"
+        state: directory
+      loop: "{{ tomcat_directories_for_group_permissions }}"
+    - name: copy the tomcat service
+      template:
+        src: tomcat.service
+        dest: "{{ tomcat_service_file }}"
+      notify:
+        - reload daemon
+    - name: enable and start tomcat service
+      service: 
+        name: tomcat.service
+        enabled: yes
+        state: started
+  handlers:
+    - name: reload daemon
+      systemd:
+        name: tomcat.service
+        daemon_reload: yes
+        state: started
