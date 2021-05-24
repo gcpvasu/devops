@@ -5,4 +5,4 @@ php_packages:
   - libapache2-mod-php
   - php-mysql
   - php-cli
-info_page_path: "/var/www/html/info.php"
+info_page_path: "/var/www/html/info.php"    
