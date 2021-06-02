@@ -25,3 +25,25 @@ courses = %w(Devops Aws Azure GCP)
 courses.each do |course|
     puts(course)
 end
+
+technologies = %w(Mobile Trending Geek)
+
+technologies.each do |tech|
+    puts(tech)
+end
+
+
+# hash
+# it is list of key and values
+Residence = {
+    'name' => 'Dernierstuff',
+    'technologies' => %w(Mobile Trending Geek),
+    'address' => {
+        'building' => '234, Lakshmi sai nagar',
+        'landmark' => 'near Ravindra Bharti School',
+        'city' => 'palakol'
+    },
+}
+
+puts(Residence['name'])
+puts(Residence['address']['landmark'])
