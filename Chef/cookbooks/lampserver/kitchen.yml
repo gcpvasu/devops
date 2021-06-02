@@ -41,7 +41,11 @@ platforms:
   - name: ubuntu-18.04
     driver: 
       image_id: ami-0747bdcabd34c712a
-
+  - name: redhat-8
+    driver:
+      image_id: ami-0b0af3577fe5e3532
+    transport:
+      username: ec2-user
 suites:
   - name: default 
     run_list:
