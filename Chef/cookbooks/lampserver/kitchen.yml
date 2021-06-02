@@ -1,6 +1,12 @@
 ---
 driver:
-  name: vagrant
+  name: ec2
+  aws_ssh_key_id: chefkey
+  region: us-east-1
+  availability_zone: us-east-1a
+  subnet_id: "subnet-010c10cbaae8a2273"
+  instance_type: t2.micro
+  security_group_ids: ["sg-0b3a49e3089d56b27"]
 
 ## The forwarded_port port feature lets you connect to ports on the VM guest via
 ## localhost on the host.
@@ -24,12 +30,20 @@ provisioner:
 verifier:
   name: inspec
 
+transport:
+  ssh_key: ./chefkey.pem
+  connection_timeout: 10
+  connection_retries: 5
+  username: ubuntu
+
+  
 platforms:
-  - name: ubuntu-20.04
-  - name: centos-8
+  - name: ubuntu-18.04
+    driver: 
+      image_id: ami-0747bdcabd34c712a
 
 suites:
-  - name: default
+  - name: default 
     run_list:
       - recipe[lampserver::default]
     verifier:
