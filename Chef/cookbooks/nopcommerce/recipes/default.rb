@@ -6,6 +6,7 @@
 
 if node['platform'] == 'ubuntu'
     include_recipe 'nopcommerce::dotnet'
+    include_recipe 'nopcommerce::mysql'
     include_recipe 'nopcommerce::nginx'
     include_recipe 'nopcommerce::nopcom'
 end
