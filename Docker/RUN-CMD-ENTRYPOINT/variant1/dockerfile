@@ -1,0 +1,5 @@
+FROM centos:7
+LABEL author="veera vasu"
+LABEL course="docker"
+RUN yum update -y && yum install httpd -y
+CMD ["echo", "Hello-world"]
