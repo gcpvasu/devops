@@ -1,0 +1,12 @@
+FROM openjdk:8
+# Base image is openjdk
+LABEL author = "veera vasu"
+LABEL organisation ="dockerpractice"
+ENV applicationpath='/springpetclinic.jar'
+ARG downloadlocation 
+# Download the image from url
+ADD ${downloadlocation} ${applicationpath}
+# SPC port runs on 8080
+EXPOSE 8080
+# Command to start the application
+CMD ["java",  "-jar",  ${applicationpath} ]
