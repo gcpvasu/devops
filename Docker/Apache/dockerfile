@@ -1,0 +1,6 @@
+FROM ubuntu:18.04
+LABEL author="vasu"
+LABEL organisation="devops practice"
+RUN apt update && apt-get install apache2 -y
+EXPOSE 80
+CMD ["apache2ctl",  "-D", "FOREGROUND"]
