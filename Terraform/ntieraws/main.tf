@@ -23,6 +23,9 @@ resource "aws_internet_gateway" "ntier_igw"{
     tags = {
       "Name" = "ntier_igw"
     }
+    depends_on = [
+        aws_vpc.testvpc
+    ]
   
 }
 
@@ -33,6 +36,10 @@ resource "aws_route_table" "public_rt" {
     tags = {
       "Name" = "ntier_public_rt"
     }
+    depends_on = [
+        aws_vpc.testvpc,
+        aws_subnet.subnets
+    ]
 }
 
 resource "aws_route" "publicrt" {
@@ -55,6 +62,12 @@ resource "aws_security_group" "websg" {
     tags = {
       "Name" = "websg"
     }
+    depends_on = [
+        aws_vpc.testvpc,
+        aws_subnet.subnets,
+        aws_route_table.public_rt,
+        aws_route_table.private_rt
+    ]
 }
 
 resource "aws_security_group_rule" "websgopenhttp" {
@@ -88,6 +101,31 @@ resource "aws_instance" "webserver1" {
     tags = {
       "Name" = "webserver1"
     }   
+    depends_on = [
+    aws_vpc.testvpc,
+    aws_security_group.websg,
+    aws_subnet.subnets,
+    aws_route_table.public_rt
+    ]
+}
+
+resource "aws_route_table" "private_rt" {
+    vpc_id = "${aws_vpc.testvpc.id}"
+    route = [ ]
+    tags = {
+      "Name" = "ntier_private_rt"
+    }
+}
+
+resource "aws_route_table_association" "private_rt_association" {
+    count = length(var.other_subnet_indexes)
+    subnet_id = "${aws_subnet.subnets[var.other_subnet_indexes[count.index]].id}"
+    route_table_id = "${aws_route_table.private_rt.id}" 
+
+    depends_on = [
+        aws_subnet.subnets,
+        aws_route_table.private_rt
+    ]
 }
 
 

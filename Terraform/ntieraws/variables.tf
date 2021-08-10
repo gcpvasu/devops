@@ -23,5 +23,9 @@ variable "ntier_subnet_tags" {
 variable "web_subnet_indexes" {
     type = list(string)
     default = [ 0 ]
-  
+}
+
+variable "other_subnet_indexes" {
+    type = list(string)
+    default = [ 1,2 ]
 }
