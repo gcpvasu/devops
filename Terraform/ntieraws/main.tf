@@ -7,7 +7,7 @@ resource "aws_vpc" "testvpc" {
 }
 
 resource "aws_subnet" "subnets" {
-    count = 3
+    count = length(var.ntier_subnet_cidrs)
     cidr_block = var.ntier_subnet_cidrs[count.index]
     availability_zone = var.ntier_subnet_azs[count.index]
     tags = {
