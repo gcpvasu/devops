@@ -15,6 +15,9 @@ variable "ntier_subnet_cidrs" {
 }
 
 variable "ntier_subnet_azs" {
-    default = ["us-east-1a", "us-east-1b", "us-east-1c"]
-  
+    default = ["us-east-1a", "us-east-1b", "us-east-1c"]  
+}
+
+variable "ntier_subnet_tags" {
+    default = ["ntier-web1", "ntier_app1", "ntier-db1"]  
 }

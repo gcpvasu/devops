@@ -1,30 +1,19 @@
-terraform {
-    required_providers {
-        aws = {
-            source = "hashicorp/aws"
-            version = "~> 3.0" 
-        }
-    }
-}
-
-provider "aws" {
-    region = "us-east-1"  
-}
-
 resource "aws_vpc" "testvpc" {
-    cidr_block = "10.10.0.0/16"  
+    cidr_block = var.ntier_cidr  
     tags = {
       "Name" = "ntier"
     }
   
 }
 
-resource "aws_subnet" "websubnet" {
-    cidr_block = "10.10.0.0/24"
-    availability_zone = "us-east-1a"
+resource "aws_subnet" "subnets" {
+    count = 3
+    cidr_block = var.ntier_subnet_cidrs[count.index]
+    availability_zone = var.ntier_subnet_azs[count.index]
     tags = {
-      "Name" = "ntier-web"
+      "Name" = var.ntier_subnet_tags[count.index]
     }
-    vpc_id = "${aws_vpc.testvpc.id}"      
+    vpc_id = "${aws_vpc.testvpc.id}"
   
 }
+
