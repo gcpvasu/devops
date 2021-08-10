@@ -9,10 +9,7 @@ variable "ntier_region" {
   
 }
 
-variable "ntier_subnet_cidrs" {
-    type = list(string)
-    default = ["10.10.0.0/24", "10.10.1.0/24", "10.10.2.0/24"]
-}
+
 
 variable "ntier_subnet_azs" {
     default = ["us-east-1a", "us-east-1b", "us-east-1c"]  
