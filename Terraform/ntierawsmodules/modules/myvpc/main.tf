@@ -1,0 +1,118 @@
+resource "aws_vpc" "testvpc" {
+    cidr_block = var.ntier_cidr  
+    tags = {
+      "Name" = "ntier"
+    }
+  
+}
+
+resource "aws_subnet" "subnets" {
+    count = length(var.ntier_subnet_azs)
+    cidr_block = cidrsubnet(var.ntier_cidr, 8, count.index)
+    availability_zone = var.ntier_subnet_azs[count.index]
+    tags = {
+      "Name" = var.ntier_subnet_tags[count.index]
+    }
+    vpc_id = "${aws_vpc.testvpc.id}"
+  
+}
+
+resource "aws_internet_gateway" "ntier_igw"{
+    vpc_id = "${aws_vpc.testvpc.id}"
+
+    tags = {
+      "Name" = "ntier_igw"
+    }
+    depends_on = [
+        aws_vpc.testvpc
+    ]
+  
+}
+
+resource "aws_route_table" "public_rt" {
+    vpc_id = "${aws_vpc.testvpc.id}"
+    
+    route = [ ]
+    tags = {
+      "Name" = "ntier_public_rt"
+    }
+    depends_on = [
+        aws_vpc.testvpc,
+        aws_subnet.subnets
+    ]
+}
+
+resource "aws_route" "publicrt" {
+  route_table_id = "${aws_route_table.public_rt.id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id = "${aws_internet_gateway.ntier_igw.id}"
+}
+
+resource "aws_route_table_association" "public_rt_association" {
+    count = length(var.web_subnet_indexes)
+    subnet_id = "${aws_subnet.subnets[var.web_subnet_indexes[count.index]].id}"
+    route_table_id = "${aws_route_table.public_rt.id}"
+}
+
+resource "aws_route_table" "private_rt" {
+    vpc_id = "${aws_vpc.testvpc.id}"
+    route = [ ]
+    tags = {
+      "Name" = "ntier_private_rt"
+    }
+}
+
+resource "aws_route_table_association" "private_rt_association" {
+    count = length(var.other_subnet_indexes)
+    subnet_id = "${aws_subnet.subnets[var.other_subnet_indexes[count.index]].id}"
+    route_table_id = "${aws_route_table.private_rt.id}" 
+
+    depends_on = [
+        aws_subnet.subnets,
+        aws_route_table.private_rt
+    ]
+}
+
+resource "aws_security_group" "websg" {
+    name = "openhttp"
+    description = "openhttp and ssh"
+    vpc_id = "${aws_vpc.testvpc.id}"
+    tags = {
+      "Name" = "websg"
+    }
+    depends_on = [
+        aws_vpc.testvpc,
+        aws_subnet.subnets,
+        aws_route_table.public_rt,
+        aws_route_table.private_rt
+    ]
+}
+
+resource "aws_security_group_rule" "websgopenhttp" {
+    type = "ingress"
+    from_port = "80"    
+    to_port = "80"
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    security_group_id = "${aws_security_group.websg.id}"
+}
+
+resource "aws_security_group_rule" "websgopenssh" {
+    type = "ingress"
+    from_port = "22"
+    to_port = "22"
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    security_group_id = "${aws_security_group.websg.id}"
+}
+
+
+
+
+
+
+
+
+  
+
+  
